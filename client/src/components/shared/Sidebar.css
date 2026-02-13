@@ -1,0 +1,237 @@
+/* Sidebar Styles */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 280px;
+    background: white;
+    /* Clean white background */
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    /* Subtle border */
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 1.5rem;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+}
+
+.sidebar.active {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    padding-left: 0.5rem;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    letter-spacing: -0.5px;
+}
+
+.brand-icon {
+    font-size: 1.75rem;
+    color: var(--primary);
+}
+
+.close-btn {
+    display: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: var(--danger);
+}
+
+/* Nav Items */
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    color: #374151;
+    /* text-gray-700 */
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+[data-theme='dark'] .nav-item {
+    color: #e5e7eb;
+    /* text-gray-200 */
+}
+
+.nav-item:hover {
+    background: rgba(36, 158, 148, 0.1);
+    /* primary/10 approx */
+    color: var(--primary);
+    transform: translateX(4px);
+}
+
+[data-theme='dark'] .nav-item:hover {
+    background: rgba(36, 158, 148, 0.2);
+    /* primary/20 approx */
+}
+
+.nav-item.active {
+    background: rgba(36, 158, 148, 0.15);
+    /* primary/15 approx */
+    color: var(--primary);
+    font-weight: 600;
+    box-shadow: none;
+    /* Removed shadow for cleaner look or consistent with requested active state */
+}
+
+.nav-icon {
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Footer & User Profile */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--bg-body);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.logout-btn {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0.6rem;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Responsive */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+    z-index: 900;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+@media (min-width: 1024px) {
+
+    /* Sidebar remains hidden by default, behaves same as mobile */
+    .sidebar-overlay {
+        display: none;
+        /* Overlay optional on desktop if we want push behavior, but user asked for slide in */
+    }
+
+    /* However, user asked for "Sidebar must automatically close... Sidebar should remain hidden until hamburger icon is clicked again" */
+    /* So we treat desktop same as mobile regarding visibility */
+}
+
+@media (min-width: 1024px) {
+    .sidebar.active {
+        box-shadow: 4px 0 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .close-btn {
+        display: block;
+    }
+}
+
+@media (max-width: 1023px) {
+    .sidebar.active {
+        box-shadow: 4px 0 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .close-btn {
+        display: block;
+    }
+}

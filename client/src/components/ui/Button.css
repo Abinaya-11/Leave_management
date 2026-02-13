@@ -1,0 +1,84 @@
+/* Button styles */
+.modern-btn {
+    position: relative;
+    border: none;
+    outline: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.modern-btn:active {
+    transform: scale(0.98);
+}
+
+/* Primary Variant */
+.btn-primary {
+    background: var(--gradient-main);
+    color: white;
+    box-shadow: 0 4px 15px rgba(36, 158, 148, 0.3);
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(36, 158, 148, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Secondary Variant */
+.btn-secondary {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid #9ca3af;
+    /* Gray-400 equivalent */
+}
+
+.btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: var(--text-muted);
+}
+
+[data-theme='dark'] .btn-secondary {
+    color: #e5e7eb;
+    /* text-gray-200 */
+    border-color: #9ca3af;
+}
+
+[data-theme='dark'] .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Danger Variant */
+.btn-danger {
+    background: var(--danger);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.25);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+}
+
+/* Loading Spinner */
+.spinner {
+    width: 1.2em;
+    height: 1.2em;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

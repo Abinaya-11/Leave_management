@@ -1,0 +1,61 @@
+.input-group {
+    margin-bottom: 1rem;
+    position: relative;
+    width: 100%;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.modern-input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    font-size: 1rem;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+    outline: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.modern-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(36, 158, 148, 0.15);
+    background: #ffffff;
+}
+
+.modern-input.has-error {
+    border-color: var(--danger);
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: color 0.3s;
+}
+
+.modern-input:focus+.input-icon {
+    color: var(--primary);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.error-message {
+    display: block;
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}

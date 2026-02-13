@@ -1,0 +1,310 @@
+/* 
+  GLASSMORPHISM AUTH PAGES DESIGN SYSTEM
+  Premium, modern, and elegant styles for Login & Register pages
+*/
+
+:root {
+    /* Colors */
+    --glass-primary: #3BC1A8;
+    --glass-secondary: #0C7779;
+    --glass-accent: #249E94;
+
+    /* Glass Effects */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-blur: blur(15px);
+    --glass-shadow: 0 8px 32px 0 rgba(12, 119, 121, 0.15);
+    --glass-input-bg: rgba(255, 255, 255, 0.05);
+
+    /* Typography */
+    --font-modern: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Background Wrapper */
+.auth-container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 50%, #99f6e4 100%);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--font-modern);
+    padding: 1.5rem;
+}
+
+/* Background Animated Orbs */
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 1;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.orb-1 {
+    width: 500px;
+    height: 500px;
+    background: var(--glass-primary);
+    top: -100px;
+    left: -100px;
+    animation: floatOrb 20s infinite alternate;
+}
+
+.orb-2 {
+    width: 400px;
+    height: 400px;
+    background: var(--glass-secondary);
+    bottom: -50px;
+    right: -50px;
+    animation: floatOrb 15s infinite alternate-reverse;
+}
+
+@keyframes floatOrb {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.3;
+    }
+
+    100% {
+        transform: translate(100px, 50px) scale(1.2);
+        opacity: 0.5;
+    }
+}
+
+/* Glass Card */
+.glass-card {
+    position: relative;
+    z-index: 10;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 2rem;
+    padding: 3rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+}
+
+.glass-card:hover {
+    box-shadow: 0 12px 40px 0 rgba(12, 119, 121, 0.2);
+}
+
+.glass-card.login-card {
+    max-width: 450px;
+    animation: slideInUp 0.6s ease-out;
+}
+
+.glass-card.register-card {
+    max-width: 900px;
+    animation: slideInUp 0.7s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header Sections */
+.auth-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.auth-logo-icon {
+    width: 4rem;
+    height: 4rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.8rem;
+    color: var(--glass-secondary);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.auth-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--glass-secondary);
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    color: #4b5563;
+    font-size: 1rem;
+}
+
+/* Form Styles */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.grid-cols-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Input Fields */
+.input-field-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--glass-secondary);
+    opacity: 0.6;
+    font-size: 1.1rem;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.glass-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3.25rem;
+    background: var(--glass-input-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+    color: var(--glass-secondary);
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.glass-input::placeholder {
+    color: #6b7280;
+    opacity: 0.6;
+}
+
+.glass-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--glass-primary);
+    box-shadow: 0 0 0 4px rgba(59, 193, 168, 0.1);
+}
+
+.glass-input:focus+.input-icon {
+    opacity: 1;
+}
+
+/* Buttons */
+.glass-button {
+    width: 100%;
+    padding: 1.1rem;
+    background: linear-gradient(135deg, var(--glass-primary), var(--glass-accent));
+    border: none;
+    border-radius: 1rem;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 15px rgba(59, 193, 168, 0.3);
+    margin-top: 1rem;
+}
+
+.glass-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 193, 168, 0.4);
+    filter: brightness(1.05);
+}
+
+.glass-button:active {
+    transform: translateY(0);
+}
+
+.glass-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Footer Links */
+.auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    color: #4b5563;
+}
+
+.auth-redirect-link {
+    color: var(--glass-secondary);
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.auth-redirect-link:hover {
+    color: var(--glass-primary);
+    text-decoration: underline;
+}
+
+/* Select Dropdown Reset */
+select.glass-input {
+    appearance: none;
+    cursor: pointer;
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--glass-secondary);
+    opacity: 0.6;
+}
+
+/* Text visibility in dark patterns */
+.dark-theme-text {
+    color: #1f2937;
+}
+
+/* Animations Helper */
+.animate-delay-1 {
+    animation-delay: 0.1s;
+}
+
+.animate-delay-2 {
+    animation-delay: 0.2s;
+}
+
+.animate-delay-3 {
+    animation-delay: 0.3s;
+}
