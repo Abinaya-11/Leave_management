@@ -21,6 +21,8 @@ app.use('/api/leaves', require('./routes/leaveRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/events', require('./routes/eventRoutes'));
+app.use('/api/leave-block', require('./routes/leaveBlockRoutes'));
+app.put('/api/unblock-student/:studentId', require('./middleware/authMiddleware').protect, require('./controllers/leaveBlockController').unblockStudent);
 
 
 // Default Route

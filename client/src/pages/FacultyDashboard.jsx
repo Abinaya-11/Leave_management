@@ -14,6 +14,9 @@ const FacultyDashboard = () => {
     const [filter, setFilter] = useState('All'); // 'All', 'Pending', 'Approved', 'Rejected'
     const [selectedLeave, setSelectedLeave] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [showOtpModal, setShowOtpModal] = useState(false);
+    const [verifyingLeaveId, setVerifyingLeaveId] = useState(null);
+    const [otpValue, setOtpValue] = useState('');
     const [otpInputs, setOtpInputs] = useState({});
     const { addToast } = useToast();
     const { user, loading } = useAuth();
@@ -99,6 +102,11 @@ const FacultyDashboard = () => {
                 });
                 fetchLeaves();
                 if (showModal) setShowModal(false);
+                if (showOtpModal) {
+                    setShowOtpModal(false);
+                    setVerifyingLeaveId(null);
+                    setOtpValue('');
+                }
             }
         } catch (err) {
             const msg = err.response?.data?.message || 'Verification failed';
@@ -253,37 +261,23 @@ const FacultyDashboard = () => {
                                                     {getStatusBadge(leave.domain_approval_status || 'Pending')}
                                                 </div>
                                             ) : (
-                                                <span style={{ color: 'var(--text-muted)' }}>-</span>
+                                                getStatusBadge('Not Required')
                                             )}
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
-                                            {leave.parent_status === 'Pending' ? (
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
-                                                    {getStatusBadge('Pending')}
-                                                    <div style={{ display: 'flex', gap: '4px' }}>
-                                                        <input 
-                                                            type="text" 
-                                                            placeholder="OTP" 
-                                                            value={otpInputs[leave._id] || ''}
-                                                            onChange={(e) => setOtpInputs({...otpInputs, [leave._id]: e.target.value})}
-                                                            style={{ 
-                                                                width: '70px', 
-                                                                padding: '6px', 
-                                                                borderRadius: '6px', 
-                                                                border: '1px solid var(--glass-border)', 
-                                                                fontSize: '0.8rem',
-                                                                background: 'rgba(255,255,255,0.2)',
-                                                                textAlign: 'center'
-                                                            }}
-                                                        />
-                                                        <button 
-                                                            onClick={() => handleVerifyParentOtp(leave._id, otpInputs[leave._id])}
-                                                            className="btn btn-primary"
-                                                            style={{ padding: '6px 10px', fontSize: '0.75rem', borderRadius: '6px' }}
-                                                        >Verify</button>
-                                                    </div>
-                                                </div>
-                                            ) : (
+                                             {leave.parent_status === 'Pending' ? (
+                                                 <div
+                                                     onClick={() => {
+                                                         setVerifyingLeaveId(leave._id);
+                                                         setShowOtpModal(true);
+                                                         setOtpValue('');
+                                                     }}
+                                                     style={{ cursor: 'pointer', display: 'inline-block' }}
+                                                     title="Click to verify Parent OTP"
+                                                 >
+                                                     {getStatusBadge('Pending')}
+                                                 </div>
+                                             ) : (
                                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                                                     {leave.parent_status === 'Approved' ? (
                                                         <>
@@ -305,12 +299,12 @@ const FacultyDashboard = () => {
                                         <td style={{ textAlign: 'center' }}>
                                             {(() => {
                                                 const isSpecial = leave.leaveType === 'SICK' || leave.leaveType === 'EMERGENCY' || leave.leaveType === 'GP';
-                                                if (isSpecial) return <span style={{ color: 'var(--text-muted)' }}>-</span>;
+                                                if (isSpecial) return getStatusBadge('Not Required');
                                                 return getStatusBadge(leave.mentorStatus);
                                             })()}
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
-                                            {leave.wardenStatus === 'Not Required' ? <span style={{ color: 'var(--text-muted)' }}>-</span> : getStatusBadge(leave.wardenStatus)}
+                                            {getStatusBadge(leave.wardenStatus || 'Pending')}
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
                                             {getStatusBadge(leave.status)}
@@ -481,13 +475,15 @@ const FacultyDashboard = () => {
                                          gridTemplateColumns: `repeat(${columnCount}, 1fr)`, 
                                          gap: '1rem' 
                                      }}>
-                                         {showDomain && (
-                                             <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                                                 <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500', color: 'var(--text-muted)', fontSize: '0.8rem' }}>Domain Approval</p>
-                                                 <p style={{ fontSize: '0.7rem', fontWeight: '700', marginBottom: '4px', color: 'var(--primary)' }}>{selectedLeave.domain_authority}</p>
-                                                 {getStatusBadge(selectedLeave.domain_approval_status || 'Pending')}
-                                             </div>
-                                         )}
+                                         <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                                             <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500', color: 'var(--text-muted)', fontSize: '0.8rem' }}>Domain Approval</p>
+                                             {selectedLeave.domain_authority ? (
+                                                 <>
+                                                     <p style={{ fontSize: '0.7rem', fontWeight: '700', marginBottom: '4px', color: 'var(--primary)' }}>{selectedLeave.domain_authority}</p>
+                                                     {getStatusBadge(selectedLeave.domain_approval_status || 'Pending')}
+                                                 </>
+                                             ) : getStatusBadge('Not Required')}
+                                         </div>
                                          <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
                                              <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500', color: 'var(--text-muted)', fontSize: '0.8rem' }}>Parent Status</p>
                                              {selectedLeave.parent_status === 'Approved' ? (
@@ -502,18 +498,18 @@ const FacultyDashboard = () => {
                                                  getStatusBadge('Pending')
                                              )}
                                          </div>
-                                         {showMentor && (
-                                             <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                                                 <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500', color: 'var(--text-muted)', fontSize: '0.8rem' }}>Mentor Status</p>
-                                                 {getStatusBadge(selectedLeave.mentorStatus || 'Pending')}
-                                             </div>
-                                         )}
-                                         {showWarden && (
-                                             <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                                                 <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500', color: 'var(--text-muted)', fontSize: '0.8rem' }}>Warden Status</p>
-                                                 {getStatusBadge(selectedLeave.wardenStatus || 'Pending')}
-                                             </div>
-                                         )}
+                                         <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                                             <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500', color: 'var(--text-muted)', fontSize: '0.8rem' }}>Mentor Status</p>
+                                             {(() => {
+                                                 const isSpecial = selectedLeave.leaveType === 'SICK' || selectedLeave.leaveType === 'EMERGENCY' || selectedLeave.leaveType === 'GP';
+                                                 if (isSpecial) return getStatusBadge('Not Required');
+                                                 return getStatusBadge(selectedLeave.mentorStatus || 'Pending');
+                                             })()}
+                                         </div>
+                                         <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                                             <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500', color: 'var(--text-muted)', fontSize: '0.8rem' }}>Warden Status</p>
+                                             {getStatusBadge(selectedLeave.wardenStatus || 'Pending')}
+                                         </div>
                                          <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
                                              <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500', color: 'var(--text-muted)', fontSize: '0.8rem' }}>Overall Status</p>
                                              {getStatusBadge(selectedLeave.status || 'Pending')}
@@ -583,6 +579,57 @@ const FacultyDashboard = () => {
                         </div>
                     </div>
                 )}
+            </Modal>
+ 
+            {/* Parent OTP Verification Modal */}
+            <Modal
+                isOpen={showOtpModal}
+                onClose={() => {
+                    setShowOtpModal(false);
+                    setVerifyingLeaveId(null);
+                    setOtpValue('');
+                }}
+                title="Verify Parent OTP"
+            >
+                <div style={{ padding: '1rem', textAlign: 'center' }}>
+                    <p style={{ marginBottom: '1.5rem', color: 'var(--text-muted)' }}>
+                        Please enter the 6-digit OTP sent to the parent's email to approve this leave application.
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.2rem' }}>
+                        <input 
+                            type="text" 
+                            placeholder="Enter 6-digit OTP" 
+                            value={otpValue}
+                            onChange={(e) => setOtpValue(e.target.value)}
+                            maxLength={6}
+                            style={{ 
+                                width: '100%',
+                                maxWidth: '200px',
+                                padding: '0.8rem', 
+                                borderRadius: '10px', 
+                                border: '2px solid var(--primary)',
+                                textAlign: 'center',
+                                fontSize: '1.2rem',
+                                fontWeight: '700',
+                                letterSpacing: '4px',
+                                background: 'var(--bg-body)',
+                                color: 'var(--text-main)'
+                            }} 
+                        />
+                        <div style={{ display: 'flex', gap: '1rem', width: '100%', justifyContent: 'center' }}>
+                            <button
+                                onClick={() => setShowOtpModal(false)}
+                                className="btn btn-outline"
+                                style={{ flex: 1, maxWidth: '120px' }}
+                            >Cancel</button>
+                            <button
+                                onClick={() => handleVerifyParentOtp(verifyingLeaveId, otpValue)}
+                                className="btn btn-primary"
+                                style={{ flex: 1, maxWidth: '120px' }}
+                            >Verify OTP</button>
+                        </div>
+                    </div>
+                </div>
             </Modal>
         </Layout>
     );

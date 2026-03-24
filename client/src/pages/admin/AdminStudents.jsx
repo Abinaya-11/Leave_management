@@ -21,8 +21,10 @@ const AdminStudents = () => {
 
     const fetchStudents = async () => {
         setIsLoading(true);
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            const res = await axios.get(`${API_URL}/api/admin/users`);
+            const res = await axios.get(`${API_URL}/api/admin/users`, config);
             setStudents(res.data.students);
         } catch (err) {
             addToast('Failed to fetch students', 'error');
@@ -32,8 +34,10 @@ const AdminStudents = () => {
     };
 
     const handleToggleBlock = async (userId) => {
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            const res = await axios.patch(`${API_URL}/api/admin/users/${userId}/block`);
+            const res = await axios.patch(`${API_URL}/api/admin/users/${userId}/block`, {}, config);
             addToast(res.data.message, 'success');
             fetchStudents();
         } catch (err) {

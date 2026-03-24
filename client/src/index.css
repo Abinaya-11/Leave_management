@@ -1,3 +1,31 @@
+/* Responsive Grid Layout Helper */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Base Layout Container */
+.main-content {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+  transition: padding var(--transition-smooth);
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    padding: 2rem;
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -88,6 +116,14 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  body {
+    font-size: 16px;
+  }
 }
 
 h1,
@@ -170,6 +206,36 @@ button {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-md);
+  padding: 1rem; /* Default mobile padding */
+  transition: padding var(--transition-smooth);
+}
+
+@media (min-width: 768px) {
+  .glass-panel {
+    padding: 2rem; /* Desktop padding */
+  }
+}
+
+/* Responsive Utilities */
+.mobile-full-width {
+  width: 100% !important;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .mobile-full-width {
+    width: auto !important;
+  }
+}
+
+.desktop-only {
+  display: flex !important;
+}
+
+@media (max-width: 1023px) {
+  .desktop-only {
+    display: none !important;
+  }
 }
 
 /* Status Badges - Pills */

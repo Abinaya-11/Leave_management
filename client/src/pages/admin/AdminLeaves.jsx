@@ -39,8 +39,9 @@ const AdminLeaves = () => {
 
     const fetchData = async () => {
         setIsLoading(true);
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const [leavesRes, deptsRes, usersRes] = await Promise.all([
                 axios.get(`${API_URL}/api/leaves/all`, config),
                 axios.get(`${API_URL}/api/admin/departments`, config),

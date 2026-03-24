@@ -8,7 +8,7 @@ import Layout from '../components/shared/Layout';
 import GlassCard from '../components/ui/GlassCard';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import { FaPaperPlane, FaCalendarAlt } from 'react-icons/fa';
+import { FaPaperPlane, FaCalendarAlt, FaExclamationTriangle } from 'react-icons/fa';
 
 const ApplyLeave = () => {
     const { user, loading } = useAuth();
@@ -405,7 +405,19 @@ const ApplyLeave = () => {
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {user?.isLeaveBlocked ? (
+                        <div style={{ padding: '3rem 2rem', textAlign: 'center', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                            <FaExclamationTriangle style={{ fontSize: '3.5rem', color: '#ef4444', marginBottom: '1.5rem' }} />
+                            <h3 style={{ color: '#ef4444', margin: '0 0 1rem 0', fontSize: '1.5rem', fontWeight: '700' }}>Leave Application Blocked</h3>
+                            <p style={{ color: 'var(--text-main)', fontSize: '1.1rem', margin: 0 }}>
+                                {user.leaveBlockedReason || 'You have exceeded your leave limit. Contact admin.'}
+                            </p>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '0.5rem' }}>
+                                Please contact your assigned mentor or the admin for unblocking.
+                            </p>
+                        </div>
+                    ) : (
+                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
                         {/* Row 1: Leave Type (Full Width) */}
                         <div style={{ width: '100%' }}>
@@ -613,11 +625,12 @@ const ApplyLeave = () => {
                         )}
 
                         {/* Row 5: Submit Button Align Right */}
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', width: '100%' }}>
                             <Button
                                 type="submit"
                                 isLoading={isSubmitting}
                                 variant="submit-premium"
+                                className="mobile-full-width"
                                 style={{
                                     paddingLeft: '2.5rem',
                                     paddingRight: '2.5rem',
@@ -630,6 +643,7 @@ const ApplyLeave = () => {
                             </Button>
                         </div>
                     </form>
+                    )}
                 </GlassCard>
             </div>
         </Layout>

@@ -104,6 +104,10 @@
         height: 64px;
     }
 
+    .desktop-only {
+        display: none !important;
+    }
+
     .user-info-display {
         display: none;
         /* Hide detailed user info on mobile navbar, it's in sidebar */

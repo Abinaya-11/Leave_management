@@ -27,8 +27,10 @@ const GPSchedule = () => {
     }, []);
 
     const fetchSchedules = async () => {
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            const res = await axios.get(`${API_URL}/api/admin/gp-schedules`);
+            const res = await axios.get(`${API_URL}/api/admin/gp-schedules`, config);
             setSchedules(res.data);
         } catch (err) {
             addToast('Failed to fetch GP schedules', 'error');
@@ -41,9 +43,11 @@ const GPSchedule = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         setIsLoading(true);
         try {
-            await axios.post(`${API_URL}/api/admin/gp-schedules`, formData);
+            await axios.post(`${API_URL}/api/admin/gp-schedules`, formData, config);
             addToast('GP Schedule created successfully', 'success');
             setFormData({ start_date: '', end_date: '', start_time: '17:00', end_time: '20:00', description: 'GP' });
             fetchSchedules();
@@ -55,10 +59,12 @@ const GPSchedule = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Delete this schedule?')) return;
+        if (!window.confirm('Are you sure you want to delete this schedule?')) return;
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            await axios.delete(`${API_URL}/api/admin/gp-schedules/${id}`);
-            addToast('Schedule deleted', 'success');
+            await axios.delete(`${API_URL}/api/admin/gp-schedules/${id}`, config);
+            addToast('Schedule deleted successfully', 'success');
             fetchSchedules();
         } catch (err) {
             addToast('Failed to delete schedule', 'error');

@@ -5,7 +5,6 @@ const GlassCard = ({ children, className = '', ...props }) => {
         <div
             className={`glass-panel p-6 ${className}`}
             style={{
-                padding: '20px',
                 borderRadius: '16px',
                 ...props.style
             }}

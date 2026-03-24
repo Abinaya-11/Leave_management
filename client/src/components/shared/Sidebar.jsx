@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
     FaGraduationCap, FaHome, FaCalendarPlus, FaHistory, FaUser,
     FaClipboardList, FaCheckCircle, FaUsers, FaUserTie,
-    FaClock, FaCalendarAlt, FaSignOutAlt, FaTimes, FaSitemap
+    FaClock, FaCalendarAlt, FaSignOutAlt, FaTimes, FaSitemap, FaChartPie, FaBan
 } from 'react-icons/fa';
 import './Sidebar.css';
 
@@ -18,13 +18,15 @@ const Sidebar = ({ isCollapsed, isMobileOpen, toggleSidebar, closeSidebar, close
     };
 
     const studentMenu = [
-        { path: '/student-dashboard', label: 'Dashboard', icon: <FaHome /> },
+        { path: '/student/dashboard', label: 'Dashboard', icon: <FaChartPie /> },
+        { path: '/student-dashboard', label: 'Leave History', icon: <FaHome /> },
         { path: '/apply-leave', label: 'Apply Leave', icon: <FaCalendarPlus /> },
         { path: '/profile', label: 'Profile', icon: <FaUser /> },
     ];
 
     const facultyMenu = [
         { path: '/faculty-dashboard', label: 'Dashboard', icon: <FaHome /> },
+        { path: '/faculty/leave-block', label: 'Leave Block', icon: <FaBan /> },
         { path: '/profile', label: 'Profile', icon: <FaUser /> },
     ];
 
@@ -36,6 +38,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, toggleSidebar, closeSidebar, close
         { path: '/admin/leaves', label: 'Leave Requests', icon: <FaClipboardList /> },
         { path: '/admin/gp-schedule', label: 'GP Schedule', icon: <FaClock /> },
         { path: '/admin/academic-calendar', label: 'Academic Calendar', icon: <FaCalendarAlt /> },
+        { path: '/admin/leave-block', label: 'Leave Block', icon: <FaBan /> },
     ];
 
     const placementMenu = [

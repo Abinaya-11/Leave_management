@@ -211,12 +211,7 @@ const LeaveHistory = ({ leaves }) => {
                             </h4>
                             <div style={{ 
                                 display: 'grid', 
-                                gridTemplateColumns: `repeat(${
-                                    (selectedLeave.domain_authority ? 1 : 0) + 
-                                    1 + // Parent Status
-                                    (((selectedLeave.leave_type || selectedLeave.leaveType) === 'SICK' || (selectedLeave.leave_type || selectedLeave.leaveType) === 'EMERGENCY' || (selectedLeave.leave_type || selectedLeave.leaveType) === 'GP' || selectedLeave.student_type?.toUpperCase() === 'DAYSCHOLAR') ? 1 : 2) + 
-                                    1
-                                }, 1fr)`, 
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', 
                                 gap: '1rem' 
                             }}>
                                 {selectedLeave.domain_authority && (

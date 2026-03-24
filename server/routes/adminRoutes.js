@@ -23,8 +23,12 @@ const {
     deleteAcademicEvent,
     createDepartment
 } = require('../controllers/adminController');
+const { getSettings, updateSettings } = require('../controllers/settingsController');
+const { protect, authorize } = require('../middleware/authMiddleware');
 
 // All routes are prefixed with /api/admin
+router.use(protect, authorize('admin'));
+
 router.get('/stats', getStats);
 router.get('/users', getUsers);
 router.get('/analytics', getAnalytics);
@@ -35,6 +39,10 @@ router.get('/hostels', getUniqueHostels);
 router.post('/dept-mentor', saveDeptMentor);
 router.post('/hostel-warden', saveHostelWarden);
 router.post('/recalculate-assignments', recalculateAssignments);
+ 
+// Settings
+router.get('/settings', getSettings);
+router.post('/settings', updateSettings);
 
 // GP Schedule
 router.get('/gp-schedules', getGPSchedules);

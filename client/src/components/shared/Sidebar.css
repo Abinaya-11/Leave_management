@@ -25,6 +25,15 @@
 .sidebar-header {
     display: none;
 }
+@media (max-width: 1023px) {
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        border-bottom: 1px solid var(--border-light);
+    }
+}
 
 .brand {
     display: flex;

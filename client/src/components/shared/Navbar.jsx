@@ -22,7 +22,7 @@ const Navbar = ({ toggleSidebar, title }) => {
                 <h1 className="page-title">{title}</h1>
             </div>
 
-            <div className="navbar-center">
+            <div className="navbar-center desktop-only">
                 <div className="brand" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <FaGraduationCap className="brand-icon" style={{ fontSize: '24px', color: 'var(--primary)' }} />
                     <span className="brand-text" style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)' }}>CampusLeave Portal</span>

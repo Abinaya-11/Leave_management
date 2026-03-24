@@ -5,6 +5,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import { ThemeProvider } from './context/ThemeContext';
 import AuthPage from './pages/AuthPage';
 import StudentDashboard from './pages/StudentDashboard';
+import StudentAnalytics from './pages/StudentAnalytics';
 import FacultyDashboard from './pages/FacultyDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminStudents from './pages/admin/AdminStudents';
@@ -19,6 +20,7 @@ import ApplyLeave from './pages/ApplyLeave';
 import DomainDashboard from './pages/DomainDashboard';
 import EventManagement from './pages/EventManagement';
 import ParentApprovePage from './pages/ParentApprovePage';
+import LeaveBlockPage from './pages/LeaveBlockPage';
 
 function App() {
   return (
@@ -31,6 +33,7 @@ function App() {
                 <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<AuthPage />} />
                 <Route path="/register" element={<AuthPage />} />
+                <Route path="/student/dashboard" element={<StudentAnalytics />} />
                 <Route path="/student-dashboard" element={<StudentDashboard />} />
                 <Route path="/apply-leave" element={<ApplyLeave />} />
                 <Route path="/parent-approve/:id" element={<ParentApprovePage />} />
@@ -50,6 +53,8 @@ function App() {
                 <Route path="/admin/leaves" element={<AdminLeaves />} />
                 <Route path="/admin/gp-schedule" element={<GPSchedule />} />
                 <Route path="/admin/academic-calendar" element={<AcademicCalendar />} />
+                <Route path="/admin/leave-block" element={<LeaveBlockPage />} />
+                <Route path="/faculty/leave-block" element={<LeaveBlockPage />} />
 
                 <Route path="/notifications" element={<NotificationPage />} />
                 <Route path="/profile" element={<Profile />} />

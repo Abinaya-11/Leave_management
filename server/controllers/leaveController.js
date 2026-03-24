@@ -4,6 +4,7 @@ const Notification = require('../models/Notification');
 const GPSchedule = require('../models/GPSchedule');
 const AcademicCalendar = require('../models/AcademicCalendar');
 const Event = require('../models/Event');
+const Settings = require('../models/Settings');
 const { sendParentApprovalEmail } = require('../utils/emailService');
 const crypto = require('crypto');
 
@@ -32,6 +33,11 @@ const applyLeave = async (req, res) => {
 
         if (!student) {
             return res.status(404).json({ message: 'Student not found' });
+        }
+
+        // 1. Block Check
+        if (student.isLeaveBlocked) {
+            return res.status(403).json({ success: false, message: 'You have exceeded your leave limit or are blocked from applying. Contact admin or your mentor.' });
         }
 
         const odLeaveTypes = [
@@ -164,6 +170,54 @@ const applyLeave = async (req, res) => {
             finalReason = 'GP';
         }
 
+        const settings = await Settings.findOne() || { maxLeavePerSemester: 8 };
+
+        // 1.5 Auto-Block Logic Check Based on Max Limits
+        const approvedLeaves = await Leave.find({ studentId: req.body.studentId, status: 'Approved' });
+        
+        let totalLeaveDays = 0;
+        approvedLeaves.forEach(l => {
+            if (l.duration) {
+                const dur = parseFloat(l.duration);
+                if (!isNaN(dur)) {
+                    totalLeaveDays += dur;
+                    return;
+                }
+            }
+            const start = new Date(l.startDate);
+            const end = new Date(l.endDate);
+            const diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            totalLeaveDays += (isNaN(diff) ? 1 : diff);
+        });
+
+        let currentDuration = 1;
+        if (req.body.duration) {
+            const parsedDur = parseFloat(req.body.duration);
+            if (!isNaN(parsedDur)) currentDuration = parsedDur;
+        } else {
+            const s = new Date(finalStartDate);
+            const e = new Date(finalEndDate);
+            const diff = Math.ceil((e - s) / (1000 * 60 * 60 * 24)) + 1;
+            currentDuration = isNaN(diff) ? 1 : diff;
+        }
+
+        if (totalLeaveDays >= settings.maxLeavePerSemester || (totalLeaveDays + currentDuration > settings.maxLeavePerSemester)) {
+            // Check if the student has been manually unblocked
+            if (student.unblockedBy) {
+                // Allow this application because they were unblocked, 
+                // but clear the unblockedBy field so the block applies to the NEXT application
+                student.unblockedBy = undefined;
+                student.isLeaveBlocked = false;
+                await student.save();
+                // Continue to apply leave...
+            } else {
+                student.isLeaveBlocked = true;
+                student.leaveBlockedReason = "Exceeded maximum leave limit";
+                await student.save();
+                return res.status(403).json({ success: false, message: `You have exceeded your leave limit (Current: ${totalLeaveDays} days). Contact admin or faculty for unblocking.` });
+            }
+        }
+
         // 2. Past Date/Time Validation (Present and Future only)
         if (leaveType !== 'GP') {
             const now = new Date();
@@ -213,7 +267,7 @@ const applyLeave = async (req, res) => {
             endTime: finalEndTime,
             period: req.body.period,
             reason: finalReason,
-            duration: req.body.duration,
+            duration: currentDuration.toString(),
             student_type: normalizedTypeForApproval === 'hosteller' ? 'Hosteller' : 'Dayscholar',
             mentorStatus: (isSpecialHostellerLeave || leaveType === 'GP') ? 'Not Required' : 'Pending',
             wardenStatus: (isSpecialHostellerLeave || leaveType === 'GP') ? 'Pending' : (normalizedTypeForApproval === 'hosteller' ? 'Pending' : 'Not Required'),
@@ -533,6 +587,11 @@ const updateLeaveStatus = async (req, res) => {
         }
 
         res.json(updatedLeave);
+
+        // After approval, check if student should be blocked for future leaves
+        if (status === 'Approved' && leave.status === 'Approved') {
+            await refreshStudentBlockStatus(leave.studentId);
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -597,7 +656,13 @@ const parentApproveLeave = async (req, res) => {
 
         const updatedLeave = await leave.save();
         await notifyStudentOfParentDecision(leave, decision, leave.mentorId || leave.studentId);
-        if (decision === 'Approved') await notifyFacultyOfParentApproval(leave);
+        if (decision === 'Approved') {
+            await notifyFacultyOfParentApproval(leave);
+            // If overall status became Approved, check block
+            if (updatedLeave.status === 'Approved') {
+                await refreshStudentBlockStatus(leave.studentId);
+            }
+        }
 
         res.json({ success: true, message: "✅ Response recorded successfully", status: leave.status });
     } catch (error) {
@@ -636,7 +701,12 @@ const parentDecisionByToken = async (req, res) => {
 
         await leave.save();
         await notifyStudentOfParentDecision(leave, decision, leave.mentorId || leave.studentId);
-        if (decision === 'Approved') await notifyFacultyOfParentApproval(leave);
+        if (decision === 'Approved') {
+            await notifyFacultyOfParentApproval(leave);
+            if (leave.status === 'Approved') {
+                await refreshStudentBlockStatus(leave.studentId);
+            }
+        }
 
         res.json({ success: true, message: "✅ Response recorded successfully", status: leave.status });
     } catch (error) {
@@ -677,6 +747,10 @@ const verifyParentOtpByMentor = async (req, res) => {
         await leave.save();
         await notifyStudentOfParentDecision(leave, 'Approved', req.user.id);
         await notifyFacultyOfParentApproval(leave);
+        
+        if (leave.status === 'Approved') {
+            await refreshStudentBlockStatus(leave.studentId);
+        }
 
         res.json({ success: true, message: 'Parent OTP verified successfully', status: leave.status });
     } catch (error) {
@@ -749,6 +823,61 @@ const notifyFacultyOfParentApproval = async (leave) => {
     }
 };
 
+// Helper: Refresh block status based on current leave history
+const refreshStudentBlockStatus = async (studentId) => {
+    try {
+        const student = await User.findById(studentId);
+        if (!student || student.role !== 'student') return;
+
+        const settings = await Settings.findOne() || { maxLeavePerSemester: 8 };
+        const approvedLeaves = await Leave.find({ 
+            studentId: studentId, 
+            status: 'Approved' 
+        });
+        
+        let totalLeaveDays = 0;
+        approvedLeaves.forEach(l => {
+            if (l.duration) {
+                const dur = parseFloat(l.duration);
+                if (!isNaN(dur)) {
+                    totalLeaveDays += dur;
+                    return;
+                }
+            }
+            const start = new Date(l.startDate);
+            const end = new Date(l.endDate);
+            const diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            totalLeaveDays += (isNaN(diff) ? 1 : diff);
+        });
+
+        // Update totalLeaveTaken field on User model
+        if (student.totalLeaveTaken !== totalLeaveDays) {
+            student.totalLeaveTaken = totalLeaveDays;
+            await student.save();
+        }
+
+        // Only auto-block if they are over limit and haven't been manually unblocked (indicated by unblockedBy field)
+        if (totalLeaveDays >= settings.maxLeavePerSemester) {
+            if (!student.isLeaveBlocked && !student.unblockedBy) {
+                student.isLeaveBlocked = true;
+                student.leaveBlockedReason = "Exceeded maximum leave limit";
+                await student.save();
+                console.log(`Student ${student.name} automatically blocked: ${totalLeaveDays} days used.`);
+            }
+        } else {
+            // Auto-unblock if they are now under the limit (e.g. after a rejection or limit increase)
+            if (student.isLeaveBlocked && student.leaveBlockedReason === "Exceeded maximum leave limit") {
+                student.isLeaveBlocked = false;
+                student.leaveBlockedReason = "";
+                await student.save();
+                console.log(`Student ${student.name} automatically unblocked: ${totalLeaveDays} days used.`);
+            }
+        }
+    } catch (err) {
+        console.error("Error in refreshStudentBlockStatus:", err);
+    }
+};
+
 module.exports = {
     applyLeave,
     getStudentLeaves,
@@ -758,5 +887,6 @@ module.exports = {
     getPublicLeaveDetails,
     parentApproveLeave,
     parentDecisionByToken,
-    verifyParentOtpByMentor
+    verifyParentOtpByMentor,
+    refreshStudentBlockStatus
 };

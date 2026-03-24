@@ -2,16 +2,31 @@ import React from 'react';
 import AnimatedStatsCard from '../ui/AnimatedStatsCard';
 import { FaCalendarCheck, FaUserCheck, FaUserTimes, FaHourglassHalf } from 'react-icons/fa';
 
-const LeaveStats = ({ leaves }) => {
-    // Mock calculation for demo purposes
-    const totalWorkingDays = 100; // This would typically come from backend
+const LeaveStats = ({ leaves, attendance }) => {
+    // Check if we have attendance data from the backend analytics
+    const hasAnalytics = attendance && typeof attendance.leaveDays === 'number';
 
-    const approvedLeaves = leaves.filter(l => l.status === 'Approved').length;
-    const pendingLeaves = leaves.filter(l => l.status === 'Pending').length;
-    const rejectedLeaves = leaves.filter(l => l.status === 'Rejected').length;
+    const totalWorkingDays = hasAnalytics ? attendance.totalWorkingDays : 100;
+    
+    // Sum of durations for approved leaves
+    const leaveDaysTaken = hasAnalytics ? attendance.leaveDays : leaves
+        .filter(l => l.status === 'Approved')
+        .reduce((sum, leave) => {
+            // Parse duration string like "6 Days" or calculate from dates
+            if (leave.duration) {
+                const dur = parseInt(leave.duration);
+                return !isNaN(dur) ? sum + dur : sum + 1;
+            }
+            const start = new Date(leave.startDate);
+            const end = new Date(leave.endDate);
+            const diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            return sum + (isNaN(diff) ? 1 : diff);
+        }, 0);
 
-    // Simple calculation: Present = Total - Approved Leaves (assuming working days are fixed)
-    const daysPresent = totalWorkingDays - approvedLeaves;
+    const pendingLeavesCount = leaves.filter(l => l.status === 'Pending').length;
+
+    // Days Present = Total Working Days - Total Leave Days
+    const daysPresent = hasAnalytics ? attendance.presentDays : Math.max(0, totalWorkingDays - leaveDaysTaken);
 
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
@@ -31,14 +46,14 @@ const LeaveStats = ({ leaves }) => {
             />
             <AnimatedStatsCard
                 title="Leaves Taken"
-                value={approvedLeaves}
+                value={leaveDaysTaken}
                 icon={<FaUserTimes />}
                 color="var(--danger)"
                 delay={300}
             />
             <AnimatedStatsCard
                 title="Pending Requests"
-                value={pendingLeaves}
+                value={pendingLeavesCount}
                 icon={<FaHourglassHalf />}
                 color="var(--warning)"
                 delay={400}

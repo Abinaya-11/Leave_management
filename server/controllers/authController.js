@@ -115,6 +115,8 @@ const registerUser = async (req, res) => {
                 student_type: populatedUser.student_type,
                 mentor_name: populatedUser.mentor?.name,
                 warden_name: populatedUser.warden?.name,
+                isLeaveBlocked: populatedUser.isLeaveBlocked,
+                leaveBlockedReason: populatedUser.leaveBlockedReason,
                 token: generateToken(populatedUser._id)
             });
         } else {
@@ -187,6 +189,8 @@ const loginUser = async (req, res) => {
                 faculty_id: populatedUser.faculty_id,
                 mentor_name: populatedUser.mentor?.name,
                 warden_name: populatedUser.warden?.name,
+                isLeaveBlocked: populatedUser.isLeaveBlocked,
+                leaveBlockedReason: populatedUser.leaveBlockedReason,
                 token: generateToken(populatedUser._id)
             });
         } else {
@@ -278,7 +282,10 @@ const updateProfile = async (req, res) => {
                 year: user.year,
                 faculty_id: user.faculty_id,
                 mentor_name: user.mentor?.name,
-                warden_name: user.warden?.name
+                warden_name: user.warden?.name,
+                isLeaveBlocked: user.isLeaveBlocked,
+                leaveBlockedReason: user.leaveBlockedReason,
+                totalLeaveTaken: user.totalLeaveTaken
             }
         });
     } catch (error) {

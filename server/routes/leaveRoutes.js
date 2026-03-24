@@ -11,6 +11,7 @@ const {
     parentDecisionByToken,
     verifyParentOtpByMentor
 } = require('../controllers/leaveController');
+const { getLeavePattern, getAttendanceSummary } = require('../controllers/analyticsController');
 
 const { protect } = require('../middleware/authMiddleware');
 
@@ -20,6 +21,8 @@ router.get('/student-history', protect, getStudentLeaves);
 router.get('/student/:id', protect, getStudentLeaves);
 router.get('/all', protect, getAllLeaves);
 router.get('/academic-calendar', protect, getAcademicCalendar);
+router.get('/attendance-summary', protect, getAttendanceSummary);
+router.get('/leave-pattern', protect, getLeavePattern);
 router.put('/:id', protect, updateLeaveStatus);
 
 // Public Parent Routes

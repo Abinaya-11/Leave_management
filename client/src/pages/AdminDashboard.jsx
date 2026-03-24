@@ -10,7 +10,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     PieChart, Pie, Cell, LineChart, Line, Legend
 } from 'recharts';
-import { FaUsers, FaUserTie, FaClipboardList, FaChartLine, FaChartPie, FaChartBar } from 'react-icons/fa';
+import { FaUsers, FaUserTie, FaClipboardList, FaChartLine, FaChartPie, FaChartBar, FaCog, FaSave } from 'react-icons/fa';
 
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6'];
 
@@ -23,6 +23,8 @@ const AdminDashboard = () => {
         leavesByStatus: [],
         monthlyTrends: []
     });
+    const [settings, setSettings] = useState({ maxLeavePerSemester: 15, totalWorkingDays: 90 });
+    const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -33,18 +35,38 @@ const AdminDashboard = () => {
 
     const fetchDashboardData = async () => {
         setIsLoading(true);
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            const [statsRes, analyticsRes] = await Promise.all([
-                axios.get(`${API_URL}/api/admin/stats`),
-                axios.get(`${API_URL}/api/admin/analytics`)
+            const [statsRes, analyticsRes, settingsRes] = await Promise.all([
+                axios.get(`${API_URL}/api/admin/stats`, config),
+                axios.get(`${API_URL}/api/admin/analytics`, config),
+                axios.get(`${API_URL}/api/admin/settings`, config)
             ]);
             setStats(statsRes.data);
             setAnalytics(analyticsRes.data);
+            setSettings(settingsRes.data);
         } catch (err) {
             console.error(err);
             addToast('Failed to fetch dashboard data', 'error');
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleUpdateSettings = async () => {
+        setIsSaving(true);
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        try {
+            const res = await axios.post(`${API_URL}/api/admin/settings`, settings, config);
+            setSettings(res.data);
+            addToast('System settings updated successfully', 'success');
+        } catch (err) {
+            console.error(err);
+            addToast('Failed to update settings', 'error');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -101,6 +123,48 @@ const AdminDashboard = () => {
                     />
                 </div>
 
+                {/* System Settings Section */}
+                <div style={{ marginBottom: '2.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                        <FaCog style={{ color: 'var(--primary)', fontSize: '1.5rem' }} />
+                        <h3 style={{ margin: 0, color: 'var(--text-main)' }}>System Settings</h3>
+                    </div>
+                    <GlassCard style={{ padding: '2rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', alignItems: 'flex-end' }}>
+                            <div className="form-group" style={{ marginBottom: 0 }}>
+                                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    Max Leaves Per Semester
+                                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>(Standard: 15)</span>
+                                </label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    value={settings.maxLeavePerSemester}
+                                    onChange={(e) => setSettings({ ...settings, maxLeavePerSemester: parseInt(e.target.value) || 0 })}
+                                />
+                            </div>
+                            <div className="form-group" style={{ marginBottom: 0 }}>
+                                <label className="form-label">Total Working Days</label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    value={settings.totalWorkingDays}
+                                    onChange={(e) => setSettings({ ...settings, totalWorkingDays: parseInt(e.target.value) || 0 })}
+                                />
+                            </div>
+                            <button 
+                                className="btn btn-primary"
+                                onClick={handleUpdateSettings}
+                                disabled={isSaving}
+                                style={{ height: '42px', width: 'fit-content', padding: '0 2rem' }}
+                            >
+                                <FaSave style={{ marginRight: '8px' }} />
+                                {isSaving ? 'Saving...' : 'Save Settings'}
+                            </button>
+                        </div>
+                    </GlassCard>
+                </div>
+
                 {/* Charts Section */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
@@ -143,7 +207,7 @@ const AdminDashboard = () => {
                         </div>
                     </GlassCard>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
 
                         {/* Pie Chart */}
                         <GlassCard style={{ padding: '2rem' }}>

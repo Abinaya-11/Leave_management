@@ -23,6 +23,20 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isLeaveBlocked: {
+        type: Boolean,
+        default: false
+    },
+    leaveBlockedReason: {
+        type: String,
+        default: ""
+    },
+    blockedDate: {
+        type: Date
+    },
+    unblockedBy: {
+        type: String
+    },
     department: {
         type: String,
         default: 'General'
@@ -87,6 +101,10 @@ const userSchema = new mongoose.Schema({
     phone_number: {
         type: String,
         default: null
+    },
+    totalLeaveTaken: {
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true

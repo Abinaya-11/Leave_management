@@ -28,8 +28,10 @@ const AdminMappings = () => {
     }, []);
 
     const fetchMappings = async () => {
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            const res = await axios.get(`${API_URL}/api/admin/mappings`);
+            const res = await axios.get(`${API_URL}/api/admin/mappings`, config);
             setDeptMentors(res.data.deptMentors);
             setHostelWardens(res.data.hostelWardens);
         } catch (err) {
@@ -38,8 +40,10 @@ const AdminMappings = () => {
     };
 
     const fetchFaculty = async () => {
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            const res = await axios.get(`${API_URL}/api/admin/users`);
+            const res = await axios.get(`${API_URL}/api/admin/users`, config);
             setFaculty(res.data.faculty);
         } catch (err) {
             addToast('Failed to fetch faculty members', 'error');
@@ -49,10 +53,12 @@ const AdminMappings = () => {
     };
 
     const fetchDynamicData = async () => {
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
             const [deptsRes, hostelsRes] = await Promise.all([
-                axios.get(`${API_URL}/api/admin/departments`),
-                axios.get(`${API_URL}/api/admin/hostels`)
+                axios.get(`${API_URL}/api/admin/departments`, config),
+                axios.get(`${API_URL}/api/admin/hostels`, config)
             ]);
             setAvailableDepts(deptsRes.data);
             setAvailableHostels(hostelsRes.data);
@@ -67,9 +73,11 @@ const AdminMappings = () => {
             addToast('Please fill all department fields', 'error');
             return;
         }
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            await axios.post(`${API_URL}/api/admin/dept-mentor`, deptForm);
-            addToast('Department mentor mapping updated', 'success');
+            await axios.post(`${API_URL}/api/admin/dept-mentor`, deptForm, config);
+            addToast('Mapping saved successfully', 'success');
             setDeptForm({ department: '', faculty_id: '' });
             fetchMappings();
         } catch (err) {
@@ -83,9 +91,11 @@ const AdminMappings = () => {
             addToast('Please fill all hostel fields', 'error');
             return;
         }
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            await axios.post(`${API_URL}/api/admin/hostel-warden`, hostelForm);
-            addToast('Hostel warden mapping updated', 'success');
+            await axios.post(`${API_URL}/api/admin/hostel-warden`, hostelForm, config);
+            addToast('Mapping saved successfully', 'success');
             setHostelForm({ hostel_name: '', floor: '', faculty_id: '' });
             fetchMappings();
         } catch (err) {
@@ -95,8 +105,10 @@ const AdminMappings = () => {
 
     const handleDelete = async (type, id) => {
         if (!window.confirm('Are you sure you want to delete this mapping?')) return;
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            await axios.delete(`${API_URL}/api/admin/mappings/${type}/${id}`);
+            await axios.delete(`${API_URL}/api/admin/mappings/${type}/${id}`, config);
             addToast('Mapping deleted successfully', 'success');
             fetchMappings();
         } catch (err) {
@@ -107,8 +119,10 @@ const AdminMappings = () => {
     const handleAddDepartment = async (e) => {
         e.preventDefault();
         if (!newDeptName.trim()) return;
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            await axios.post(`${API_URL}/api/admin/departments`, { dept_name: newDeptName });
+            await axios.post(`${API_URL}/api/admin/departments`, { dept_name: newDeptName }, config);
             addToast('Department added successfully', 'success');
             setNewDeptName('');
             fetchDynamicData();
@@ -119,8 +133,10 @@ const AdminMappings = () => {
 
     const handleRecalculate = async () => {
         if (!window.confirm('This will update assignments for ALL existing students based on these rules. Continue?')) return;
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            const res = await axios.post(`${API_URL}/api/admin/recalculate-assignments`);
+            const res = await axios.post(`${API_URL}/api/admin/recalculate-assignments`, {}, config);
             addToast(res.data.message, 'success');
         } catch (err) {
             addToast('Failed to recalculate assignments', 'error');
