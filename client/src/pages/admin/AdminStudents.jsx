@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import axios from 'axios';
+import API_URL from '../../config';
 import Layout from '../../components/shared/Layout';
 import GlassCard from '../../components/ui/GlassCard';
 import { FaUsers, FaSearch, FaBan, FaCheck, FaTrash, FaChevronDown } from 'react-icons/fa';
@@ -21,7 +22,7 @@ const AdminStudents = () => {
     const fetchStudents = async () => {
         setIsLoading(true);
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/users');
+            const res = await axios.get(`${API_URL}/api/admin/users`);
             setStudents(res.data.students);
         } catch (err) {
             addToast('Failed to fetch students', 'error');
@@ -32,7 +33,7 @@ const AdminStudents = () => {
 
     const handleToggleBlock = async (userId) => {
         try {
-            const res = await axios.patch(`http://localhost:5000/api/admin/users/${userId}/block`);
+            const res = await axios.patch(`${API_URL}/api/admin/users/${userId}/block`);
             addToast(res.data.message, 'success');
             fetchStudents();
         } catch (err) {
@@ -43,7 +44,7 @@ const AdminStudents = () => {
     const handleDeleteUser = async (userId) => {
         if (!window.confirm('Are you sure you want to delete this student?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/admin/users/${userId}`);
+            await axios.delete(`${API_URL}/api/admin/users/${userId}`);
             addToast('Student deleted successfully', 'success');
             fetchStudents();
         } catch (err) {

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_URL from '../config';
 import Layout from '../components/shared/Layout';
 import GlassCard from '../components/ui/GlassCard';
 import Input from '../components/ui/Input';
@@ -42,7 +43,7 @@ const ApplyLeave = () => {
     const fetchEventsByOdType = async (odType) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get(`http://localhost:5000/api/events?od_type=${odType}&activeOnly=true`, {
+            const res = await axios.get(`${API_URL}/api/events?od_type=${odType}&activeOnly=true`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.data && res.data.success) {
@@ -56,7 +57,7 @@ const ApplyLeave = () => {
     const fetchAcademicEvents = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/leaves/academic-calendar', {
+            const res = await axios.get(`${API_URL}/api/leaves/academic-calendar`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setAcademicEvents(res.data);
@@ -355,7 +356,7 @@ const ApplyLeave = () => {
 
             const periodDesc = (formData.fromTime || formData.toTime) ? 'Custom' : 'Full Day';
 
-            await axios.post('http://localhost:5000/api/leaves/apply', {
+            await axios.post(`${API_URL}/api/leaves/apply`, {
                 ...formData,
                 period: periodDesc,
                 startTime: formatTimeAMPM(formData.fromTime) || '12:00 AM',

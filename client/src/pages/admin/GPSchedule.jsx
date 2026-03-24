@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../../config';
 import { FaCalendarPlus, FaTrash, FaClock, FaCalendarAlt } from 'react-icons/fa';
 import Layout from '../../components/shared/Layout';
 import GlassCard from '../../components/ui/GlassCard';
@@ -27,7 +28,7 @@ const GPSchedule = () => {
 
     const fetchSchedules = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/gp-schedules');
+            const res = await axios.get(`${API_URL}/api/admin/gp-schedules`);
             setSchedules(res.data);
         } catch (err) {
             addToast('Failed to fetch GP schedules', 'error');
@@ -42,7 +43,7 @@ const GPSchedule = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            await axios.post('http://localhost:5000/api/admin/gp-schedules', formData);
+            await axios.post(`${API_URL}/api/admin/gp-schedules`, formData);
             addToast('GP Schedule created successfully', 'success');
             setFormData({ start_date: '', end_date: '', start_time: '17:00', end_time: '20:00', description: 'GP' });
             fetchSchedules();
@@ -56,7 +57,7 @@ const GPSchedule = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this schedule?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/admin/gp-schedules/${id}`);
+            await axios.delete(`${API_URL}/api/admin/gp-schedules/${id}`);
             addToast('Schedule deleted', 'success');
             fetchSchedules();
         } catch (err) {

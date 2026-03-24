@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import axios from 'axios';
+import API_URL from '../config';
 import Layout from '../components/shared/Layout';
 import LeaveStats from '../components/dashboard/LeaveStats';
 import LeaveHistory from '../components/dashboard/LeaveHistory';
@@ -34,7 +35,7 @@ const StudentDashboard = () => {
         setIsSubmitting(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.put('http://localhost:5000/api/auth/update-parent-details', parentData, {
+            const res = await axios.put(`${API_URL}/api/auth/update-parent-details`, parentData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.data.success) {
@@ -54,7 +55,7 @@ const StudentDashboard = () => {
             const token = localStorage.getItem('token');
             if (!token) return;
             
-            const res = await axios.get(`http://localhost:5000/api/leaves/student-history`, {
+            const res = await axios.get(`${API_URL}/api/leaves/student-history`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

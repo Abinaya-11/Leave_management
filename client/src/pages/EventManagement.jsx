@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../config';
 import { useToast } from '../context/ToastContext';
 import Layout from '../components/shared/Layout';
 import GlassCard from '../components/ui/GlassCard';
@@ -73,7 +74,7 @@ const EventManagement = () => {
 
     const fetchEvents = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/events?cell=${getCellName()}`);
+            const res = await axios.get(`${API_URL}/api/events?cell=${getCellName()}`);
             if (res.data && res.data.success) {
                 setEvents(res.data.data);
             }
@@ -114,12 +115,12 @@ const EventManagement = () => {
             };
 
             if (isEditing) {
-                await axios.put(`http://localhost:5000/api/events/${currentEventId}`, dataToSubmit, {
+                await axios.put(`${API_URL}/api/events/${currentEventId}`, dataToSubmit, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 addToast('Event updated successfully', 'success');
             } else {
-                await axios.post('http://localhost:5000/api/events', dataToSubmit, {
+                await axios.post(`${API_URL}/api/events`, dataToSubmit, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 addToast('Event created successfully', 'success');
@@ -156,7 +157,7 @@ const EventManagement = () => {
         if (!window.confirm('Are you sure you want to cancel this event?')) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.patch(`http://localhost:5000/api/events/${id}/cancel`, {}, {
+            await axios.patch(`${API_URL}/api/events/${id}/cancel`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             addToast('Event cancelled successfully', 'success');

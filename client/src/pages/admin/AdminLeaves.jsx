@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../../config';
 import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';
 import Layout from '../../components/shared/Layout';
@@ -41,9 +42,9 @@ const AdminLeaves = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const [leavesRes, deptsRes, usersRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/leaves/all', config),
-                axios.get('http://localhost:5000/api/admin/departments', config),
-                axios.get('http://localhost:5000/api/admin/users', config)
+                axios.get(`${API_URL}/api/leaves/all`, config),
+                axios.get(`${API_URL}/api/admin/departments`, config),
+                axios.get(`${API_URL}/api/admin/users`, config)
             ]);
 
             setLeaves(leavesRes.data);

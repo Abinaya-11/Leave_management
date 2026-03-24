@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../config';
 import { useToast } from '../context/ToastContext';
 import Layout from '../components/shared/Layout';
 import GlassCard from '../components/ui/GlassCard';
@@ -45,7 +46,7 @@ const FacultyDashboard = () => {
 
     const fetchLeaves = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/leaves/all', {
+            const res = await axios.get(`${API_URL}/api/leaves/all`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setLeaves(res.data);
@@ -59,7 +60,7 @@ const FacultyDashboard = () => {
         const remark = prompt(`Enter remark for ${status} (Optional):`) || '';
 
         try {
-            await axios.put(`http://localhost:5000/api/leaves/${id}`, {
+            await axios.put(`${API_URL}/api/leaves/${id}`, {
                 status,
                 adminRemark: remark
             }, {
@@ -82,7 +83,7 @@ const FacultyDashboard = () => {
         if (otp.length !== 6) return addToast('OTP must be 6 digits', 'error');
 
         try {
-            const res = await axios.post('http://localhost:5000/api/leaves/mentor/verify-parent-otp', {
+            const res = await axios.post(`${API_URL}/api/leaves/mentor/verify-parent-otp`, {
                 leave_id: leaveId,
                 otp: otp
             }, {

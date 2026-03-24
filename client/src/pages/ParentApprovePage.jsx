@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import API_URL from '../config';
 import GlassCard from '../components/ui/GlassCard';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
@@ -24,7 +25,7 @@ const ParentApprovePage = () => {
 
     const handleDirectDecision = async (token, decision) => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/leaves/public/${id}/parent-decision-token`, {
+            const res = await axios.get(`${API_URL}/api/leaves/public/${id}/parent-decision-token`, {
                 params: { token, decision }
             });
             if (res.data.success) {
@@ -40,7 +41,7 @@ const ParentApprovePage = () => {
 
     const fetchLeaveDetails = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/leaves/public/${id}`);
+            const res = await axios.get(`${API_URL}/api/leaves/public/${id}`);
             setLeave(res.data);
             if (status === 'processing') {
                 if (res.data.parent_status !== 'Pending') {

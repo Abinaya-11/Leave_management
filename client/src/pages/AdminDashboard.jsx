@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import axios from 'axios';
+import API_URL from '../config';
 import Layout from '../components/shared/Layout';
 import GlassCard from '../components/ui/GlassCard';
 import AnimatedStatsCard from '../components/ui/AnimatedStatsCard';
@@ -34,8 +35,8 @@ const AdminDashboard = () => {
         setIsLoading(true);
         try {
             const [statsRes, analyticsRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/admin/stats'),
-                axios.get('http://localhost:5000/api/admin/analytics')
+                axios.get(`${API_URL}/api/admin/stats`),
+                axios.get(`${API_URL}/api/admin/analytics`)
             ]);
             setStats(statsRes.data);
             setAnalytics(analyticsRes.data);

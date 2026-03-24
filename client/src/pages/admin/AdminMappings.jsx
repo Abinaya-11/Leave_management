@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useToast } from '../../context/ToastContext';
 import axios from 'axios';
+import API_URL from '../../config';
 import Layout from '../../components/shared/Layout';
 import { FaBuilding, FaHotel, FaPlus, FaTrash, FaUserTie, FaSync, FaSitemap } from 'react-icons/fa';
 import './AdminMappings.css';
@@ -28,7 +29,7 @@ const AdminMappings = () => {
 
     const fetchMappings = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/mappings');
+            const res = await axios.get(`${API_URL}/api/admin/mappings`);
             setDeptMentors(res.data.deptMentors);
             setHostelWardens(res.data.hostelWardens);
         } catch (err) {
@@ -38,7 +39,7 @@ const AdminMappings = () => {
 
     const fetchFaculty = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/users');
+            const res = await axios.get(`${API_URL}/api/admin/users`);
             setFaculty(res.data.faculty);
         } catch (err) {
             addToast('Failed to fetch faculty members', 'error');
@@ -50,8 +51,8 @@ const AdminMappings = () => {
     const fetchDynamicData = async () => {
         try {
             const [deptsRes, hostelsRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/admin/departments'),
-                axios.get('http://localhost:5000/api/admin/hostels')
+                axios.get(`${API_URL}/api/admin/departments`),
+                axios.get(`${API_URL}/api/admin/hostels`)
             ]);
             setAvailableDepts(deptsRes.data);
             setAvailableHostels(hostelsRes.data);
@@ -67,7 +68,7 @@ const AdminMappings = () => {
             return;
         }
         try {
-            await axios.post('http://localhost:5000/api/admin/dept-mentor', deptForm);
+            await axios.post(`${API_URL}/api/admin/dept-mentor`, deptForm);
             addToast('Department mentor mapping updated', 'success');
             setDeptForm({ department: '', faculty_id: '' });
             fetchMappings();
@@ -83,7 +84,7 @@ const AdminMappings = () => {
             return;
         }
         try {
-            await axios.post('http://localhost:5000/api/admin/hostel-warden', hostelForm);
+            await axios.post(`${API_URL}/api/admin/hostel-warden`, hostelForm);
             addToast('Hostel warden mapping updated', 'success');
             setHostelForm({ hostel_name: '', floor: '', faculty_id: '' });
             fetchMappings();
@@ -95,7 +96,7 @@ const AdminMappings = () => {
     const handleDelete = async (type, id) => {
         if (!window.confirm('Are you sure you want to delete this mapping?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/admin/mappings/${type}/${id}`);
+            await axios.delete(`${API_URL}/api/admin/mappings/${type}/${id}`);
             addToast('Mapping deleted successfully', 'success');
             fetchMappings();
         } catch (err) {
@@ -107,7 +108,7 @@ const AdminMappings = () => {
         e.preventDefault();
         if (!newDeptName.trim()) return;
         try {
-            await axios.post('http://localhost:5000/api/admin/departments', { dept_name: newDeptName });
+            await axios.post(`${API_URL}/api/admin/departments`, { dept_name: newDeptName });
             addToast('Department added successfully', 'success');
             setNewDeptName('');
             fetchDynamicData();
@@ -119,7 +120,7 @@ const AdminMappings = () => {
     const handleRecalculate = async () => {
         if (!window.confirm('This will update assignments for ALL existing students based on these rules. Continue?')) return;
         try {
-            const res = await axios.post('http://localhost:5000/api/admin/recalculate-assignments');
+            const res = await axios.post(`${API_URL}/api/admin/recalculate-assignments`);
             addToast(res.data.message, 'success');
         } catch (err) {
             addToast('Failed to recalculate assignments', 'error');

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../../config';
 import { FaPlus, FaTrash, FaEdit, FaCalendarDay, FaInfoCircle } from 'react-icons/fa';
 import Layout from '../../components/shared/Layout';
 import GlassCard from '../../components/ui/GlassCard';
@@ -28,7 +29,7 @@ const AcademicCalendar = () => {
 
     const fetchEvents = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/academic-events');
+            const res = await axios.get(`${API_URL}/api/admin/academic-events`);
             setEvents(res.data);
         } catch (err) {
             addToast('Failed to fetch events', 'error');
@@ -44,10 +45,10 @@ const AcademicCalendar = () => {
         setIsLoading(true);
         try {
             if (isEditing) {
-                await axios.put(`http://localhost:5000/api/admin/academic-events/${isEditing}`, formData);
+                await axios.put(`${API_URL}/api/admin/academic-events/${isEditing}`, formData);
                 addToast('Event updated successfully', 'success');
             } else {
-                await axios.post('http://localhost:5000/api/admin/academic-events', formData);
+                await axios.post(`${API_URL}/api/admin/academic-events`, formData);
                 addToast('Event created successfully', 'success');
             }
             setFormData({ event_name: '', event_type: 'Exam', start_date: '', end_date: '', description: '' });
@@ -74,7 +75,7 @@ const AcademicCalendar = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this event?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/admin/academic-events/${id}`);
+            await axios.delete(`${API_URL}/api/admin/academic-events/${id}`);
             addToast('Event deleted', 'success');
             fetchEvents();
         } catch (err) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import axios from 'axios';
+import API_URL from '../config';
 import Layout from '../components/shared/Layout';
 import GlassCard from '../components/ui/GlassCard';
 import Input from '../components/ui/Input';
@@ -50,7 +51,7 @@ const Profile = () => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const res = await axios.put('http://localhost:5000/api/users/profile', formData);
+            const res = await axios.put(`${API_URL}/api/users/profile`, formData);
             if (res.data.success) {
                 updateUser(res.data.user);
                 addToast('Profile updated successfully', 'success');

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../config';
 import { useAuth } from './AuthContext';
 
 const NotificationContext = createContext();
@@ -15,7 +16,7 @@ export const NotificationProvider = ({ children }) => {
         if (!user) return;
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get(`http://localhost:5000/api/notifications/${user._id}`, {
+            const res = await axios.get(`${API_URL}/api/notifications/${user._id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setNotifications(res.data);
@@ -28,7 +29,7 @@ export const NotificationProvider = ({ children }) => {
     const markAsRead = async (id) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:5000/api/notifications/${id}/read`, {}, {
+            await axios.put(`${API_URL}/api/notifications/${id}/read`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setNotifications(prev => prev.map(n => n._id === id ? { ...n, read: true } : n));
@@ -42,7 +43,7 @@ export const NotificationProvider = ({ children }) => {
         if (!user) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:5000/api/notifications/mark-all-read/${user._id}`, {}, {
+            await axios.put(`${API_URL}/api/notifications/mark-all-read/${user._id}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setNotifications(prev => prev.map(n => ({ ...n, read: true })));

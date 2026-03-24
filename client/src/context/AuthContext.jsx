@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import API_URL from '../config';
 
 const AuthContext = createContext();
 
@@ -20,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+            const res = await axios.post(`${API_URL}/api/auth/login`, { email, password });
             const userData = res.data;
             localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('token', userData.token);
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (name, email, password, role, department, register_no, student_type, hostel_name, floor, room_no) => {
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/register', {
+            const res = await axios.post(`${API_URL}/api/auth/register`, {
                 name, email, password, role, department, register_no, student_type, hostel_name, floor, room_no
             });
             // Registration successful, usually redirects to login, so no need to set user immediately unless auto-login
