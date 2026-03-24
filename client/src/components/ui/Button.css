@@ -22,13 +22,14 @@
 
 /* Primary Variant */
 .btn-primary {
-    background: var(--gradient-main);
+    background: var(--primary);
     color: white;
-    box-shadow: 0 4px 15px rgba(36, 158, 148, 0.3);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 
 .btn-primary:hover {
-    box-shadow: 0 6px 20px rgba(36, 158, 148, 0.4);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--primary) 40%, transparent);
+    background: var(--primary-hover);
     transform: translateY(-2px);
 }
 
@@ -65,6 +66,34 @@
 .btn-danger:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+    background: #dc2626;
+    /* darker red */
+}
+
+/* Submit Premium Variant */
+.btn-submit-premium {
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+    color: #FFFFFF !important;
+    font-weight: 600;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 35%, transparent);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-submit-premium:hover:not(:disabled) {
+    transform: scale(1.03);
+    background: linear-gradient(135deg, var(--primary-hover), var(--primary-dark));
+    box-shadow: 0 10px 25px color-mix(in srgb, var(--primary) 45%, transparent);
+}
+
+.btn-submit-premium:disabled {
+    background: #94A3B8 !important;
+    color: #F1F5F9 !important;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    opacity: 1;
 }
 
 /* Loading Spinner */

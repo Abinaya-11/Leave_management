@@ -4,55 +4,17 @@ import { useToast } from '../context/ToastContext';
 import axios from 'axios';
 import Layout from '../components/shared/Layout';
 import GlassCard from '../components/ui/GlassCard';
+import AnimatedStatsCard from '../components/ui/AnimatedStatsCard';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     PieChart, Pie, Cell, LineChart, Line, Legend
 } from 'recharts';
 import { FaUsers, FaUserTie, FaClipboardList, FaChartLine, FaChartPie, FaChartBar } from 'react-icons/fa';
 
-const StatCard = ({ title, value, icon, color, bg }) => (
-    <GlassCard className="fade-in" style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '1.5rem',
-        padding: '1.5rem',
-        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-        cursor: 'default'
-    }}
-        onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-5px)';
-            e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
-        }}
-        onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-        }}
-    >
-        <div style={{
-            width: '56px',
-            height: '56px',
-            borderRadius: '16px',
-            background: bg || `${color}15`,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: color,
-            fontSize: '1.5rem',
-            boxShadow: `0 4px 10px ${color}15`
-        }}>
-            {icon}
-        </div>
-        <div>
-            <h4 style={{ margin: '0 0 0.25rem 0', color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>{title}</h4>
-            <div style={{ fontSize: '1.75rem', fontWeight: '800', color: 'var(--text-main)', lineHeight: '1' }}>{value}</div>
-        </div>
-    </GlassCard>
-);
-
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6'];
 
 const AdminDashboard = () => {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const { addToast } = useToast();
     const [stats, setStats] = useState({ students: 0, faculty: 0, leaves: 0 });
     const [analytics, setAnalytics] = useState({
@@ -63,10 +25,10 @@ const AdminDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (user && user.role === 'admin') {
+        if (!loading && user && user.role === 'admin') {
             fetchDashboardData();
         }
-    }, [user]);
+    }, [user, loading]);
 
     const fetchDashboardData = async () => {
         setIsLoading(true);
@@ -85,7 +47,7 @@ const AdminDashboard = () => {
         }
     };
 
-    if (isLoading) {
+    if (loading || isLoading) {
         return (
             <Layout title="Admin Dashboard">
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
@@ -95,9 +57,19 @@ const AdminDashboard = () => {
         );
     }
 
+    if (!user) {
+        return (
+            <Layout title="Admin Dashboard">
+                <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-main)' }}>
+                    Please login to view your dashboard.
+                </div>
+            </Layout>
+        );
+    }
+
     return (
         <Layout title="Admin Dashboard">
-            <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }} className="fade-in">
+            <div className="fade-in">
                 <div style={{ marginBottom: '2rem' }}>
                     <h2 style={{ color: 'var(--text-main)', marginBottom: '0.25rem' }}>Leave Analytics Overview</h2>
                     <p style={{ color: 'var(--text-muted)' }}>Real-time statistics and trends</p>
@@ -105,26 +77,26 @@ const AdminDashboard = () => {
 
                 {/* Summary Cards */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
-                    <StatCard
+                    <AnimatedStatsCard
                         title="Total Students"
                         value={stats.students}
                         icon={<FaUsers />}
                         color="#6366f1"
-                        bg="rgba(99, 102, 241, 0.1)"
+                        delay={100}
                     />
-                    <StatCard
+                    <AnimatedStatsCard
                         title="Total Faculty"
                         value={stats.faculty}
                         icon={<FaUserTie />}
                         color="#ec4899"
-                        bg="rgba(236, 72, 153, 0.1)"
+                        delay={200}
                     />
-                    <StatCard
+                    <AnimatedStatsCard
                         title="Total Leave Applications"
                         value={stats.leaves}
                         icon={<FaClipboardList />}
                         color="#10b981"
-                        bg="rgba(16, 185, 129, 0.1)"
+                        delay={300}
                     />
                 </div>
 

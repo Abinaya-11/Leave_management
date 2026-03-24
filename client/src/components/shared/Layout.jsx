@@ -1,20 +1,38 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import './Layout.css';
 
 const Layout = ({ children, title }) => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        if (window.innerWidth < 1024) {
+            setIsMobileOpen(!isMobileOpen);
+        } else {
+            setIsSidebarCollapsed(!isSidebarCollapsed);
+        }
+    };
 
     return (
-        <div className="app-container">
-            <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+        <div className={`app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+            <Navbar toggleSidebar={toggleSidebar} title={title} />
+            <div className="main-layout-body">
+                <Sidebar
+                    isCollapsed={isSidebarCollapsed}
+                    isMobileOpen={isMobileOpen}
+                    toggleSidebar={toggleSidebar}
+                    closeSidebar={() => setIsSidebarCollapsed(true)}
+                    closeMobile={() => setIsMobileOpen(false)}
+                />
 
-            <main className={`main-content ${isSidebarOpen ? 'sidebar-open' : ''}`}>
-                <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} title={title} />
-                <div className="content-wrapper fade-in">
-                    {children}
-                </div>
-            </main>
+                <main className="main-content">
+                    <div className="content-wrapper">
+                        {children}
+                    </div>
+                </main>
+            </div>
         </div>
     );
 };

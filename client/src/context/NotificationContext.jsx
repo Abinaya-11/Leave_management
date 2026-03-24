@@ -14,7 +14,10 @@ export const NotificationProvider = ({ children }) => {
     const fetchNotifications = async () => {
         if (!user) return;
         try {
-            const res = await axios.get(`http://localhost:5000/api/notifications/${user._id}`);
+            const token = localStorage.getItem('token');
+            const res = await axios.get(`http://localhost:5000/api/notifications/${user._id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setNotifications(res.data);
             setUnreadCount(res.data.filter(n => !n.read).length);
         } catch (error) {
@@ -24,7 +27,10 @@ export const NotificationProvider = ({ children }) => {
 
     const markAsRead = async (id) => {
         try {
-            await axios.put(`http://localhost:5000/api/notifications/${id}/read`);
+            const token = localStorage.getItem('token');
+            await axios.put(`http://localhost:5000/api/notifications/${id}/read`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setNotifications(prev => prev.map(n => n._id === id ? { ...n, read: true } : n));
             setUnreadCount(prev => Math.max(0, prev - 1));
         } catch (error) {
@@ -35,7 +41,10 @@ export const NotificationProvider = ({ children }) => {
     const markAllAsRead = async () => {
         if (!user) return;
         try {
-            await axios.put(`http://localhost:5000/api/notifications/mark-all-read/${user._id}`);
+            const token = localStorage.getItem('token');
+            await axios.put(`http://localhost:5000/api/notifications/mark-all-read/${user._id}`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setNotifications(prev => prev.map(n => ({ ...n, read: true })));
             setUnreadCount(0);
         } catch (error) {

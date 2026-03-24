@@ -31,9 +31,11 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (name, email, password, role, department) => {
+    const register = async (name, email, password, role, department, register_no, student_type, hostel_name, floor, room_no) => {
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/register', { name, email, password, role, department });
+            const res = await axios.post('http://localhost:5000/api/auth/register', {
+                name, email, password, role, department, register_no, student_type, hostel_name, floor, room_no
+            });
             // Registration successful, usually redirects to login, so no need to set user immediately unless auto-login
             return res.data;
         } catch (error) {
@@ -47,8 +49,14 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    const updateUser = (data) => {
+        const newUser = { ...user, ...data };
+        localStorage.setItem('user', JSON.stringify(newUser));
+        setUser(newUser);
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, register, logout, updateUser, loading }}>
             {children}
         </AuthContext.Provider>
     );

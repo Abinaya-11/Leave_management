@@ -1,0 +1,232 @@
+.rules-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.rules-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.rules-header h2 {
+    color: var(--text-main);
+    font-size: 1.75rem;
+    margin-bottom: 5px;
+}
+
+.rules-header p {
+    color: var(--text-muted);
+}
+
+.apply-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.9);
+    color: #000000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.apply-btn:hover {
+    background: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme='dark'] .apply-btn {
+    background: rgba(255, 255, 255, 0.85);
+    color: #000000;
+}
+
+[data-theme='dark'] .apply-btn:hover {
+    background: #FFFFFF;
+}
+
+.tabs-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 1rem;
+    border: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #E5E7EB;
+    color: #374151;
+}
+
+[data-theme='dark'] .tab-btn {
+    background: #1F2937;
+    color: #D1D5DB;
+}
+
+.tab-btn.active {
+    background: #0ea5e9;
+    color: #FFFFFF;
+    border-color: #0ea5e9;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+}
+
+[data-theme='dark'] .tab-btn.active {
+    background: #0ea5e9;
+    border-color: #0ea5e9;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.tab-btn:hover:not(.active) {
+    background: #D1D5DB;
+    transform: translateY(-1px);
+}
+
+[data-theme='dark'] .tab-btn:hover:not(.active) {
+    background: #374151;
+}
+
+.rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 1024px) {
+    .rules-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.rule-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--glass-shadow);
+}
+
+.rule-card h3 {
+    margin-bottom: 25px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 0.9rem;
+}
+
+.form-group select,
+.form-group input {
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.form-group select option {
+    background: #1a1a1a;
+    color: white;
+}
+
+.submit-rule-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    background: #0ea5e9;
+    color: #FFFFFF;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+}
+
+.submit-rule-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.25);
+}
+
+[data-theme='dark'] .submit-rule-btn {
+    background: #0ea5e9;
+}
+
+[data-theme='dark'] .submit-rule-btn:hover {
+    background: #0284c7;
+}
+
+.rules-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.rules-table th {
+    text-align: left;
+    padding: 15px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.rules-table td {
+    padding: 15px;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.delete-rule-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-rule-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.1);
+}
