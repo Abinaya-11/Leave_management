@@ -1,6 +1,6 @@
 import React from 'react';
 import GlassCard from '../ui/GlassCard';
-import { FaHistory, FaInfoCircle, FaCheckCircle, FaTimesCircle, FaClock } from 'react-icons/fa';
+import { FaHistory, FaInfoCircle, FaCheckCircle, FaTimesCircle, FaClock, FaCalendarAlt } from 'react-icons/fa';
 import Modal from '../ui/Modal';
 
 const LeaveHistory = ({ leaves }) => {
