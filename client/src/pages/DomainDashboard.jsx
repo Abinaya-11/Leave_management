@@ -11,6 +11,7 @@ import { useAuth } from '../context/AuthContext';
 
 const DomainDashboard = () => {
     const [leaves, setLeaves] = useState([]);
+    const [filter, setFilter] = useState('All');
     const [selectedLeave, setSelectedLeave] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const { addToast } = useToast();
@@ -66,6 +67,10 @@ const DomainDashboard = () => {
         return <span className={className}>{status}</span>;
     };
 
+    const filteredLeaves = filter === 'All'
+        ? leaves
+        : leaves.filter(leave => leave.status === filter);
+
     // Get dashboard title based on role
     const getTitle = () => {
         switch (user?.role) {
@@ -81,7 +86,7 @@ const DomainDashboard = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                 <AnimatedStatsCard
                     title="Pending Requests"
-                    value={leaves.length}
+                    value={leaves.filter(l => l.status === 'Pending').length}
                     icon={<FaHourglassHalf />}
                     color="var(--warning)"
                     delay={100}
@@ -96,8 +101,30 @@ const DomainDashboard = () => {
             </div>
 
             <GlassCard className="fade-in">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h3 style={{ margin: 0 }}>Pending OD Applications</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <h3 style={{ margin: 0 }}>OD Applications</h3>
+
+                    <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.4)', padding: '0.3rem', borderRadius: '10px' }}>
+                        {['All', 'Pending', 'Approved', 'Rejected'].map((f) => (
+                            <button
+                                key={f}
+                                onClick={() => setFilter(f)}
+                                style={{
+                                    border: 'none',
+                                    background: filter === f ? 'white' : 'transparent',
+                                    color: filter === f ? 'var(--primary)' : 'var(--text-muted)',
+                                    padding: '0.4rem 1rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '500',
+                                    boxShadow: filter === f ? '0 2px 5px rgba(0,0,0,0.05)' : 'none',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                {f}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="table-container">
@@ -115,14 +142,14 @@ const DomainDashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {leaves.length === 0 ? (
+                            {filteredLeaves.length === 0 ? (
                                 <tr>
                                     <td colSpan={user?.role === 'placement_cell' || user?.role === 'iecc' || user?.role === 'clubs_coordinator' ? 7 : 7} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                                        No pending applications found for your domain.
+                                        No Requests Found
                                     </td>
                                 </tr>
                             ) : (
-                                leaves.map((leave) => (
+                                filteredLeaves.map((leave) => (
                                     <tr key={leave._id}>
                                         <td>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
